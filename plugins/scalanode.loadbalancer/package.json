@@ -1,0 +1,12 @@
+{
+    "name": "scalanode.loadbalancer",
+    "version": "0.0.1",
+
+    "main": "./loadbalancer",
+
+    "plugin": {
+        "consumes": [
+            "connect"
+        ]
+    }
+}

@@ -6,7 +6,8 @@
 
     "plugin": {
         "consumes": [
-            "connect"
+            "connect",
+            "scalanode.worker"
         ]
     }
 }

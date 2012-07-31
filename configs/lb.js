@@ -4,6 +4,9 @@ module.exports = [
       host: "0.0.0.0",
       port: 8000
   },
+  {
+      packagePath: "./scalanode.loadbalancer",
+      registryPort: 7998
+  },
   "architect/plugins/architect.log",
-  "./scalanode.core"
 ];
