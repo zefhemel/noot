@@ -1,0 +1,15 @@
+{
+    "name": "scalanode.core",
+    "version": "0.0.1",
+
+    "main": "./core",
+
+    "plugin": {
+        "provides": [
+            "scalanode"
+        ],
+        "consumes": [
+            "connect"
+        ]
+    }
+}

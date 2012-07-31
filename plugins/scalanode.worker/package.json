@@ -1,0 +1,15 @@
+{
+    "name": "scalanode.worker",
+    "version": "0.0.1",
+
+    "main": "./worker",
+
+    "plugin": {
+        "consumes": [
+            "connect"
+        ],
+        "provides": [
+            "scalanode.worker"
+        ]
+    }
+}

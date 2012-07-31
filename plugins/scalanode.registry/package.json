@@ -1,0 +1,9 @@
+{
+    "name": "scalanode.registry",
+    "version": "0.0.1",
+
+    "main": "./registry",
+
+    "plugin": {
+    }
+}

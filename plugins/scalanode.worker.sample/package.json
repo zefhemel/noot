@@ -1,0 +1,12 @@
+{
+    "name": "scalanode.worker.sample",
+    "version": "0.0.1",
+
+    "main": "./worker",
+
+    "plugin": {
+        "consumes": [
+            "connect"
+        ]
+    }
+}
