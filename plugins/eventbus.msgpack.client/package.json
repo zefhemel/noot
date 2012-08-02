@@ -1,0 +1,12 @@
+{
+    "name": "eventbus.msgpack.client",
+    "version": "0.0.1",
+
+    "main": "./eventbus-msgpack-client",
+
+    "plugin": {
+        "provides": [
+            "scalanode.eventbus.client"
+        ]
+    }
+}

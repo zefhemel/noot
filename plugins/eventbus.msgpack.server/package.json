@@ -1,11 +1,11 @@
 {
-    "name": "scalanode.registry",
+    "name": "scalanode.loadbalancer",
     "version": "0.0.1",
 
-    "main": "./registry",
+    "main": "./eventbus-msgpack-server",
 
     "plugin": {
-        "consumes": [
+        "provides": [
             "scalanode.eventbus.server"
         ]
     }

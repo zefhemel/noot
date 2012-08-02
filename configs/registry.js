@@ -1,7 +1,8 @@
 module.exports = [
   {
-      packagePath: "./scalanode.registry",
-      workerPort: 7999,
-      lbPort: 7998
-  }
+      packagePath: "./eventbus.msgpack.server",
+      host: "0.0.0.0",
+      port: 7999
+  },
+  "./scalanode.registry"
 ];

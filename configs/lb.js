@@ -5,6 +5,11 @@ module.exports = [
       port: 8000
   },
   {
+        packagePath: "./eventbus.msgpack.client",
+        host: "localhost",
+        port: 7999
+  },
+  {
       packagePath: "./scalanode.loadbalancer",
       registryPort: 7998
   },
