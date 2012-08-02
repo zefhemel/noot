@@ -1,18 +1,12 @@
+var url = require("url");
 
 module.exports = function startup(options, imports, register) {
-    
     var eventEmitter = imports["scalanode.eventbus.server"];
+    var connect = imports.connect;
+    
+    connect.use(apiHandler);
     
     var workers = {};
-
-    eventEmitter.on("worker/attach", function(iid) {
-        workers[iid] = true;
-        console.log("Attached worker", iid);
-    });
-    eventEmitter.on("worker/detach", function(iid) {
-        delete workers[iid];
-        console.log("Detached worker", iid);
-    });
 
     eventEmitter.on("lb/attach", function(iid) {
         // Let's broadcast all workers so that the new lb knows about them
@@ -23,5 +17,28 @@ module.exports = function startup(options, imports, register) {
     
     function broadcastWorkers() {
         eventEmitter.remoteEmit("workers", Object.keys(workers));
+    }
+    
+    function apiHandler(req, res, next) {
+        var parsedUrl = url.parse(req.url, true);
+        switch(parsedUrl.pathname) {
+            case "/register":
+                var host = parsedUrl.query.host;
+                eventEmitter.remoteEmit("worker/attach", host);
+                workers[host] = true;
+                console.log("Attached worker", host);
+                res.writeHead(200);
+                res.end("OK");
+                break;
+            case "/unregister":
+                var host = parsedUrl.query.host;
+                delete workers[host];
+                console.log("Detached worker", host);
+                res.writeHead(200);
+                res.end("OK");
+                break;
+            default:
+                next();
+        }
     }
 };

@@ -4,5 +4,12 @@ module.exports = [
       host: "0.0.0.0",
       port: 7999
   },
-  "./scalanode.registry"
+  // For the worker API
+  {
+    packagePath: "connect-architect/connect",
+    host: "localhost",
+    port: 7998
+},
+  "./scalanode.registry",
+  "architect/plugins/architect.log",
 ];

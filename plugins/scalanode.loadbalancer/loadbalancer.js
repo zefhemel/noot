@@ -8,50 +8,47 @@ httpProxy.setMaxSockets(100000);
 var proxy = new httpProxy.RoutingProxy();
 
 proxy.on("proxyError", function(err, req, res) {
-    console.error("Could not proxy request " + req.headers.host + req.url + " -> " + res.$host + ":" + res.$port);
+    console.error("Could not proxy request " + req.headers.host + req.url + " -> " + res.$host);
+    res.writeHead(500);
+    res.end("Could not proxy request.");
 });
 
 module.exports = function startup(options, imports, register) {
     assert(options.registryPort, "option 'registryPort' is required.");
     
     var connect = imports.connect;
+    var registry = imports["scalanode.eventbus.client"];
     var handlers = [];
     var requestCount = 0;
     
-    var api = {
-        registerWorker: function(url, callback) {
-            console.log("Register", url);
-            if(handlers.indexOf(url) !== -1)
-                handlers.push(url);
-            callback();
-        },
-        unregisterWorker: function(url, callback) {
-            console.log("Unregister", url);
-            var idx = handlers.indexOf(url);
-            
-            if(idx !== -1)
-                handlers.splice(idx, 1);
-            
-            callback();
-        }
-    };
+    registry.on("worker/attach", function(host) {
+        console.log("Register", host);
+        if(handlers.indexOf(host) !== -1)
+            handlers.push(host);
+    });
     
-    var agent = new Agent(api);
-    var socket = net.connect(options.registryPort, function() {
-        agent.connect(socket, function(err, api) {
-            api.getWorkers(function(err, workers) {
-                console.log("Workers", workers);
-                if (err) throw err;
-                handlers = workers;
-            });
-        });
+    registry.on("worker/detach", function(host) {
+        console.log("Unregister", host);
+        var idx = handlers.indexOf(host);
+        
+        if(idx !== -1)
+            handlers.splice(idx, 1);
+        
+    });
+    
+    registry.on("workers", function(handlers_) {
+        handlers = handlers_;
+        console.log(handlers);
     });
     
     register();
     
     connect.useMain(function(req, res, next) {
         var handlerHost = handlers[requestCount++ % handlers.length];
+        //console.log("Request", requestCount, handlerHost);
         var parts = handlerHost.split(":");
+        
+        res.$host = handlerHost;
         
         return proxy.proxyRequest(req, res, {
             host: parts[0],

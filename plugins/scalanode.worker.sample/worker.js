@@ -8,11 +8,6 @@ module.exports = function startup(options, imports, register) {
         });
         res.write('request successfully proxied: ' + req.url + ', to: first');
         res.end();
-    }, function(err) {
-        if(err) {
-            return console.error("Error", err);
-        }
-        console.log("Listening on", connect.getPort());
     });
 
     register();

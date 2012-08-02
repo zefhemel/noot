@@ -11,7 +11,7 @@
          "request": "2.9.x",
          "architect": "0.1.4",
          "connect-architect": "0.0.3",
-         "smith": "0.1.5"
+         "msgpack-js": "0.1.1"
     },
     
     "mappings": {

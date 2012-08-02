@@ -1,20 +1,28 @@
 var fs = require("fs");
+var request = require("request");
+var assert = require("assert");
 
 module.exports = function startup(options, imports, register) {
-    var eventDispatcher = imports["scalanode.eventbus.client"];
-    
     var connect = imports.connect;
+    
+    assert(options.registryUrl, "Option 'registryUrl' is required.");
+    var registryUrl = options.registryUrl;
     
     var host = connect.getHost();
     var port = connect.getPort();
     
     var iid = host + ":" + port;
-    eventDispatcher.emit("worker/attach", iid);
+    
+    apiCall(registryUrl + "/register", {host: iid}, function(err) {
+        if (err)
+            console.error(err);
+    });
     
     register(null, {
         "scalanode.worker": {}
     });
     
+    return;
     setTimeout(function() {
         var allLoadedFiles = Object.keys(require("module")._cache);
         allLoadedFiles.forEach(function(path) {
@@ -24,12 +32,23 @@ module.exports = function startup(options, imports, register) {
         function checkChanges(curr, prev) {
             if(curr.mtime !== prev.mtime) {
                 console.log("Some file has changed, shutting down.");
-                eventDispatcher.emit("worker/detach", iid);
-                // No callback for this yet, so let's give it a second (HACK!)
-                setTimeout(function() {
+                apiCall(registryUrl + "/unregister", {host: iid}, function() {
                     process.exit(5);
-                }, 1000);
+                });
             }
         }
     }, 500);
 };
+
+function apiCall(url, query, callback) {
+    request({
+        url: url,
+        qs: query
+        //headers: { auth: AUTH
+    }, function(error, response, body) {
+        if (!error && response.statusCode == 200)
+            callback();
+        else
+            callback({error: error, response: response, body: body});
+    });
+}
