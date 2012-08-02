@@ -6,7 +6,6 @@
 
     "plugin": {
         "consumes": [
-            "connect",
             "scalanode.eventbus.client"
         ]
     }

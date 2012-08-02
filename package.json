@@ -7,7 +7,7 @@
     },
     "author": "Ajax.org B.V. <info@ajax.org>",
     "dependencies": {
-         "http-proxy": "0.8.2",
+         "bouncy": "1.3.1",
          "request": "2.9.x",
          "architect": "0.1.4",
          "connect-architect": "0.0.3",

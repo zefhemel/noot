@@ -1,22 +1,10 @@
-var Agent = require("smith").Agent;
-var net = require("net");
 var assert = require("assert");
-var httpProxy = require("http-proxy");
-
-httpProxy.setMaxSockets(100000);
-
-var proxy = new httpProxy.RoutingProxy();
-
-proxy.on("proxyError", function(err, req, res) {
-    console.error("Could not proxy request " + req.headers.host + req.url + " -> " + res.$host);
-    res.writeHead(500);
-    res.end("Could not proxy request.");
-});
+var bouncy = require('bouncy');
 
 module.exports = function startup(options, imports, register) {
     assert(options.registryPort, "option 'registryPort' is required.");
+    assert(options.port, "option 'port' is required.");
     
-    var connect = imports.connect;
     var registry = imports["scalanode.eventbus.client"];
     var handlers = [];
     var requestCount = 0;
@@ -43,18 +31,12 @@ module.exports = function startup(options, imports, register) {
     
     register();
     
-    connect.useMain(function(req, res, next) {
+    bouncy(function (req, bounce) {
         var handlerHost = handlers[requestCount++ % handlers.length];
-        //console.log("Request", requestCount, handlerHost);
+        console.log("Request", requestCount, handlerHost);
         var parts = handlerHost.split(":");
-        
-        res.$host = handlerHost;
-        
-        return proxy.proxyRequest(req, res, {
-            host: parts[0],
-            port: parts[1]
-        });
-    });
+        bounce(parts[0], +parts[1]);
+    }).listen(options.port);
     
     register();
 };
